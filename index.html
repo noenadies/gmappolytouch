@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+
+      #idp{
+        z-index: 5;
+        position: absolute;
+        top: 30px;
+        left: 250px;
+      }
+      #idpp{
+        z-index:6;
+        position: absolute;
+        top: 30px;
+        left: 250px;
+         color: #db3d3d;
+         font-size: 33px;
+
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+       <div id="idp"><p id="idpp">aca estoy</p></div>
+    <script>
+      var map;
+      function initMap() {
+       
+     map = new google.maps.Map(document.getElementById('map'), { center: new google.maps.LatLng(2.177169, -73.784906), zoom:17, mapTypeId: google.maps.MapTypeId.HYBRID, scaleControl: true });
+    var isClosed = false;
+    var poly = new google.maps.Polyline({ map: map, path: [], strokeColor: "#FF0000", strokeOpacity: 1.0, strokeWeight: 2 });
+    google.maps.event.addListener(map, 'click', function (clickEvent) {
+        if (isClosed)
+            return;
+        var markerIndex = poly.getPath().length;
+        var isFirstMarker = markerIndex === 0;
+        var marker = new google.maps.Marker({ map: map, position: clickEvent.latLng, draggable: true });
+        if (isFirstMarker) {
+            google.maps.event.addListener(marker, 'click', function () {
+                if (isClosed)
+                    return;
+                var path = poly.getPath();
+                poly.setMap(null);
+                poly = new google.maps.Polygon({ map: map, path: path, strokeColor: "#FF0000", strokeOpacity: 0.8, strokeWeight: 2, fillColor: "#FF0000", fillOpacity: 0.35 });
+                isClosed = true;
+            });
+        }
+        google.maps.event.addListener(marker, 'drag', function (dragEvent) {
+            poly.getPath().setAt(markerIndex, dragEvent.latLng);
+        });
+        poly.getPath().push(clickEvent.latLng);
+
+        escribe(clickEvent.latLng)
+    });
+      }
+function escribe(st){
+  document.getElementById("idpp").innerHTML =st;
+}
+
+    </script>
+ <script async defer
+   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCV4ya46Yoag-iGeJb5SUwZ2q1Irx0UjnU&callback=initMap">
+    </script>
+  </body>
+</html>
